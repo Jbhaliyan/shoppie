@@ -1,40 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:the_shop_practice/screens/product_detail_screen.dart';
+import 'package:the_shop_practice/utilities/providers/cart.dart';
+import 'package:the_shop_practice/utilities/providers/product.dart';
 
 class ProductItem extends StatelessWidget {
   // const ProductItem({ Key? key }) : super(key: key);
 
-  final String id;
-  final String title;
-  final String imageUrl;
-  ProductItem(this.id, this.title, this.imageUrl);
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context,
+        listen:
+            false); //no change in item when added to cart only item is added to the cart.
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context)
-                .pushNamed(ProductDetailScreen.routeName, arguments: id);
+            Navigator.of(context).pushNamed(ProductDetailScreen.routeName,
+                arguments: product.id);
           },
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Icon(
-              Icons.favorite,
-              // color: Colors.white,
-              color: Theme.of(context).accentColor,
+          leading: Consumer<Product>(
+            builder: (ctx, product, child) => IconButton(
+              icon: Icon(
+                product.isFavourite ? Icons.favorite : Icons.favorite_border,
+                // color: Colors.white,
+                color: Theme.of(context).accentColor,
+              ),
+              onPressed: () {
+                product.toggleFavouriteStatus();
+              },
             ),
-            onPressed: null,
           ),
           title: Text(
-            title,
+            product.title,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
@@ -42,7 +49,9 @@ class ProductItem extends StatelessWidget {
               Icons.shopping_cart,
               color: Theme.of(context).accentColor,
             ),
-            onPressed: null,
+            onPressed: () {
+              cart.addItems(product.id, product.price, product.title);
+            },
           ),
         ),
       ),
