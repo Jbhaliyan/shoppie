@@ -7,7 +7,6 @@ import 'package:the_shop_practice/screens/products_overview.dart';
 import 'package:the_shop_practice/screens/user_products_Screen.dart';
 import 'package:the_shop_practice/utilities/providers/cart.dart';
 import 'package:the_shop_practice/utilities/providers/products_provider.dart';
-
 import 'screens/cart_screen.dart';
 import 'utilities/providers/orders.dart' as od;
 
