@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'product.dart';
 
 class Products with ChangeNotifier {
@@ -55,18 +56,20 @@ class Products with ChangeNotifier {
   List<Product> get favourites {
     return _items.where((item) => item.isFavourite).toList();
   }
-  // void showFavourite() {
-  //   _showFavouritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll() {
-  //   _showFavouritesOnly = false;
-
-  //   notifyListeners();
-  // }
 
   addProduct(Product product) {
+    final url = Uri.https(
+        'shoppractice-6dcdc-default-rtdb.firebaseio.com', '/products.json');
+    http.post(
+      url,
+      body: json.encode({
+        'title': product.title,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+        'price': product.price,
+        'isFavourite': product.isFavourite,
+      }),
+    );
     final newProduct = Product(
         id: DateTime.now().toString(),
         title: product.title,
