@@ -57,29 +57,55 @@ class Products with ChangeNotifier {
     return _items.where((item) => item.isFavourite).toList();
   }
 
-  addProduct(Product product) {
+  Future<void> fetchAndSerProduct() async {
     final url = Uri.https(
         'shoppractice-6dcdc-default-rtdb.firebaseio.com', '/products.json');
-    http.post(
-      url,
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'imageUrl': product.imageUrl,
-        'price': product.price,
-        'isFavourite': product.isFavourite,
-      }),
-    );
-    final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
-    _items.add(newProduct);
-    // _items.insert(0, newProduct); //at the start of the list
+    try {
+      final response = await http.get(url);
+      final extractData = json.decode(response.body) as Map<String, dynamic>;
+      extractData.forEach((prodId, prodData) {
+        
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 
-    notifyListeners();
+  Future<void> addProduct(Product product) async {
+    final url = Uri.https(
+        'shoppractice-6dcdc-default-rtdb.firebaseio.com', '/products');
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavourite': product.isFavourite,
+        }),
+      );
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
+      _items.add(newProduct);
+      // _items.insert(0, newProduct); //at the start of the list
+
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+    // .then((response) {
+    // print(json.decode(response.body));
+
+    // }).catchError((error) {
+    //   print(error);
+    //   throw error;
+    // });
   }
 
   updateProduct(String id, Product newProduct) {

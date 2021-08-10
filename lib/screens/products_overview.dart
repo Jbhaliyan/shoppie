@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_shop_practice/utilities/providers/cart.dart';
+import 'package:the_shop_practice/utilities/providers/products_provider.dart';
 import 'package:the_shop_practice/utilities/widgets/app_drawer.dart';
 import 'package:the_shop_practice/utilities/widgets/badge.dart';
 // import 'package:provider/provider.dart';
@@ -22,6 +23,27 @@ class ProductOverview extends StatefulWidget {
 
 class _ProductOverviewState extends State<ProductOverview> {
   bool _showOnlyFavourite = false;
+  var _isInit = true;
+  @override
+  void initState() {
+    // http.get
+    // Provider.of<Products>(context).fetchAndSerProduct(); //won't work
+//     Future.delayed(Duration.zero).then((_){
+// Provider.of<Products>(context).fetchAndSerProduct();
+//     });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    if (_isInit) {
+      Provider.of<Products>(context).fetchAndSerProduct();
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final productsContainer = Provider.of<Products>(context);
