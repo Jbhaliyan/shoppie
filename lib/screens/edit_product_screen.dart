@@ -16,8 +16,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  var _editedProduct =
-      Product(id: null, title: '', description: '', price: 0, imageUrl: '');
+  var _editedProduct = Product(
+    id: null,
+    title: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+  );
 
   var _initValues = {
     'title': '',
@@ -80,23 +85,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() async {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
     }
+    _form.currentState.save();
     setState(() {
       _isLoading = true;
     });
-    _form.currentState.save();
+
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-      _isLoading = false;
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+      // _isLoading = false;
+      // setState(() {
+      //   _isLoading = false;
+      // });
+      // Navigator.of(context).pop();
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
@@ -119,15 +125,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      } finally {
-        //runs code that is mandatory even if try fails
-        setState(() {
-          _isLoading = false;
-        });
+        // } finally {
+        //   //runs code that is mandatory even if try fails
+        // setState(() {
+        //   _isLoading = false;
+        // });
+        // }
 
-        Navigator.of(context).pop();
+        //   Navigator.of(context).pop();
+        // }
       }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   @override

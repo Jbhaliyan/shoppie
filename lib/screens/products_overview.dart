@@ -24,6 +24,7 @@ class ProductOverview extends StatefulWidget {
 class _ProductOverviewState extends State<ProductOverview> {
   bool _showOnlyFavourite = false;
   var _isInit = true;
+  bool _isLoading = false;
   @override
   void initState() {
     // http.get
@@ -38,7 +39,15 @@ class _ProductOverviewState extends State<ProductOverview> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     if (_isInit) {
-      Provider.of<Products>(context).fetchAndSerProduct();
+      setState(() {
+        _isLoading = true;
+      });
+
+      Provider.of<Products>(context).fetchAndSerProduct().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -98,6 +107,8 @@ class _ProductOverviewState extends State<ProductOverview> {
           ],
         ),
         drawer: AppDrawer(),
-        body: ProductsGrid(_showOnlyFavourite));
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ProductsGrid(_showOnlyFavourite));
   }
 }
